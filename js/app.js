@@ -212,7 +212,7 @@ function openPreview(id){
       ${payUrl(p,2) && p.pricePro && p.pricePro!==p.price ? `<a class="btn btn-ghost" href="${esc(payUrl(p,2))}" target="_blank" rel="noopener">Buy Pro · ${fmt(p.pricePro)}</a>` : ""}
       <button class="add btn${payUrl(p,1) ? "" : " btn-primary"}" data-id="${esc(p.id)}">Add to cart</button>
     </div>
-    <p class="mono" style="color:var(--muted);margin:0">${payUrl(p,1) ? "Secure payment by Razorpay · " : ""}<a href="licenses.html">License details</a></p>`;
+    <p class="mono" style="color:var(--muted);margin:0">${payUrl(p,1) ? "Secure checkout · " : ""}<a href="licenses.html">License details</a></p>`;
   syncButtons();
   try { history.replaceState(null, "", "#" + p.id); } catch(e) {}
   $("#mClose").focus();
@@ -267,7 +267,7 @@ $("#checkout").addEventListener("click", () => {
   const missing = cart.filter(id => !payUrl(byId[id], lic));
   if (missing.length) { toast("Checkout opens soon. Payments aren't connected yet."); return; }
   const L = $("#lines");
-  L.innerHTML = `<div class="paylist"><p>${cart.length > 1 ? "Each item has its own secure Razorpay checkout. Pay for each one below:" : "You'll finish paying on Razorpay's secure checkout:"}</p>
+  L.innerHTML = `<div class="paylist"><p>${cart.length > 1 ? "Each item has its own secure checkout. Pay for each one below:" : "You'll finish paying on our secure checkout page:"}</p>
     ${cart.map(id => { const p = byId[id]; return `<a class="btn btn-primary" href="${esc(payUrl(p,lic))}" target="_blank" rel="noopener">Pay ${fmt(priceFor(p,lic))} · ${esc(p.name)} ↗</a>`; }).join("")}
     <button class="rm" id="backToCart">Back to cart</button></div>`;
   $("#backToCart").addEventListener("click", renderCart);

@@ -28,8 +28,8 @@
      poster: "media/my-pack-poster.jpg",
      preview: "media/my-pack-preview.mp4",
      gallery: ["media/my-pack-example.jpg"],  // extra stills / examples
-     buyUrl: "https://pages.razorpay.com/...",     // Razorpay Payment Page for the Standard price
-     buyUrlPro: "https://pages.razorpay.com/...",  // Razorpay Payment Page for the Pro price
+     buyUrl: "",                    // payment link for the Standard price
+     buyUrlPro: "",                 // payment link for the Pro price
      featured: true                 // show on the home page
    }
    ===================================================================== */
@@ -55,11 +55,10 @@ window.VFOX_PRODUCTS = [
     poster: "media/proton-beam-poster.jpg",
     preview: "media/proton-beam-preview.mp4",
     gallery: ["media/proton-beam-example.jpg"],
-    // Razorpay Payment Page links (see "Connecting Razorpay" in README.txt).
-    // Paste the Standard ₹239 page link into buyUrl and the Pro ₹399 link into buyUrlPro.
+    // Payment links: Standard ₹239 goes in buyUrl, Pro ₹399 in buyUrlPro.
     // Leave them empty and the site shows "payments aren't connected yet".
-    buyUrl: "https://rzp.io/rzp/edKub5V",
-    buyUrlPro: "https://rzp.io/rzp/edKub5V",   // same page for now; swap in a separate ₹399 page if you make one
+    buyUrl: "",
+    buyUrlPro: "",
     featured: true
   }
 ];
