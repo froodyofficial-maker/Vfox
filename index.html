@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>vfox Store</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="vfox home"><img src="assets/logo.png" alt="vfox"></a>
+    <ul class="nav-links"><li><a href="after-effects.html">After Effects</a></li><li><a href="stock-footage.html">Stock Footage</a></li><li><a href="licenses.html">Licenses</a></li><li><a href="faq.html">FAQ</a></li></ul>
+    <button class="cart-btn" data-cart-open aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+      <span class="lbl">Cart</span><span class="cart-count" data-cart-count>0</span>
+    </button>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</nav>
+<header class="hero">
+  <canvas id="heroFx" aria-hidden="true"></canvas>
+  <div class="viewer" aria-hidden="true"></div>
+  <div class="hud mono" aria-hidden="true"><span class="rec"><i></i>REC · 3840×2160</span><span id="tc">00:00:00:00</span></div>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">After Effects project files · Stock footage</span>
+      <h1>Drop-in VFX that <em>cut clean.</em></h1>
+      <p class="lede">Ready-made After Effects effects you open, position in your shot and render. No plugins to buy. Built for creators who want the shot done today.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="after-effects.html">After Effects projects</a>
+        <a class="btn btn-ghost" href="stock-footage.html">Stock footage</a>
+      </div>
+    </div>
+    <img class="hero-mark" src="assets/mark.png" alt="vfox fox mark">
+  </div>
+</header>
+<main>
+  <section><div class="wrap">
+    <div class="cats">
+      <a class="cat" href="after-effects.html" data-cat="ae">
+        <span class="mono" data-count="ae" data-unit="project"></span>
+        <h3>After Effects Projects</h3><p>Editable .aep files you can reposition and customise.</p></a>
+      <a class="cat" href="stock-footage.html" data-cat="stock">
+        <span class="mono">Coming soon</span>
+        <h3>Stock Footage</h3><p>Ready-to-use clips for your edits. Join the list to hear when they drop.</p></a>
+    </div>
+  </div></section>
+  <section style="padding-top:0"><div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">Latest drops</span><h2>Fresh from the render queue</h2><p>Click a preview to see it full size.</p></div>
+      <a class="link-arrow" href="after-effects.html">Browse everything →</a>
+    </div>
+    <div class="grid" data-grid="featured" data-limit="4"></div>
+  </div></section>
+  <section style="padding-top:0" data-bundle><div class="wrap">
+    <div class="bundle">
+      <div><span class="eyebrow">Bundle</span><h2 data-b="name"></h2><p data-b="blurb"></p></div>
+      <div class="side"><div class="big" data-b="price"></div><div class="was mono" data-b="was"></div>
+        <button class="btn btn-primary add" data-id="bundle">Add bundle to cart</button></div>
+    </div>
+  </div></section>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <a href="index.html"><img src="assets/logo.png" alt="vfox"></a>
+    <form class="signup">
+      <input id="email-foot" type="email" placeholder="Email for new drops" aria-label="Email address" required>
+      <button class="btn btn-primary" type="submit">Notify me</button>
+    </form>
+    <nav aria-label="Footer">
+      <a href="after-effects.html">After Effects</a><a href="stock-footage.html">Stock Footage</a><a href="licenses.html">Licenses</a><a href="faq.html">FAQ</a>
+    </nav>
+    <small>© 2026 vfox. All prices in Indian rupees (₹).</small>
+  </div>
+</footer>
+<script src="js/products.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
