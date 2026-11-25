@@ -392,6 +392,25 @@ if (heroSlot) {
       <div class="cap"><span><b>${esc(p.name)}</b><small>${typeName(p.type)}</small></span><span class="price">${fmt(p.price)}</span></div>
     </a>`;
 }
+/* ---------- Home hero: drifting embers + running timecode ---------- */
+const hc = $("#heroFx");
+if (hc) {
+  const hx = hc.getContext("2d"), V = "139,77,255", Lc = "217,207,251"; let parts = [];
+  const size = () => { const dpr = Math.min(devicePixelRatio||1, 2), r = hc.getBoundingClientRect(); hc.width = Math.max(1, Math.round(r.width*dpr)); hc.height = Math.max(1, Math.round(r.height*dpr));
+    let seed = 42; const R = () => (seed = (seed*1664525 + 1013904223)>>>0) / 4294967296;
+    parts = Array.from({ length: Math.round(hc.width*hc.height/9000) }, () => ({ x:R(), y:R(), s:R()*1.8+.4, v:.02+R()*.05, p:R()*6, c:R()<.7?V:Lc })); };
+  const frame = t => { const w = hc.width, h = hc.height, k = devicePixelRatio>1?2:1; hx.clearRect(0,0,w,h);
+    const g = hx.createRadialGradient(w*.75,h*.5,0,w*.75,h*.5,w*.55); g.addColorStop(0,`rgba(${V},.22)`); g.addColorStop(1,`rgba(${V},0)`); hx.fillStyle = g; hx.fillRect(0,0,w,h);
+    for (const p of parts) { const y = ((p.y - t*p.v)%1+1)%1, x = p.x + Math.sin(t*.5+p.p)*.01; hx.fillStyle = `rgba(${p.c},${.25+.5*Math.abs(Math.sin(t+p.p))})`; hx.fillRect(x*w, y*h, p.s*k, p.s*k); } };
+  size(); frame(3);
+  let rT; addEventListener("resize", () => { clearTimeout(rT); rT = setTimeout(() => { size(); frame(3); }, 150); });
+  const tcEl = $("#tc"), pad = n => String(n).padStart(2,"0"); let vis = true;
+  new IntersectionObserver(es => { vis = es[0].isIntersecting; }).observe(hc);
+  if (!reduce) { const t0 = performance.now(); (function tick(ts){ if (vis) { const t = (ts-t0)/1000; frame(3+t);
+    const f = Math.floor(t*29.97); if (tcEl) tcEl.textContent = `00:${pad(Math.floor(f/1798)%60)}:${pad(Math.floor(f/29.97)%60)}:${pad(f%30)}`; }
+    requestAnimationFrame(tick); })(t0); }
+}
+
 $$("[data-count]").forEach(el => {
   const n = PRODUCTS.filter(p => el.dataset.count==="all" || p.type===el.dataset.count).length;
   el.textContent = n ? n + " " + el.dataset.unit + (n===1?"":"s") : "Coming soon";
