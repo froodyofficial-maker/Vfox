@@ -468,3 +468,28 @@ tr:last-child td{border-bottom:0}
 .rm:hover{color:var(--rec)}
 .btn[disabled]{background:var(--surface-2);color:var(--muted);border-color:var(--line);box-shadow:none;cursor:not-allowed}
 .page-head .wrap{padding-block:44px 36px}
+
+/* ---------- Shopper extras ---------- */
+.skip{position:absolute;left:-9999px;top:8px;z-index:200;background:var(--violet);color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600}
+.skip:focus{left:max(16px,env(safe-area-inset-left,0px))}
+.share{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:4px}
+.share .mono{color:var(--muted);margin-right:4px}
+.share-btn{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:500;text-decoration:none;cursor:pointer}
+.share-btn:hover{border-color:var(--violet-hi)}
+.mbar{display:none}
+@media (max-width:960px){
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;align-items:center;justify-content:space-between;gap:12px;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));transform:translateY(110%);transition:transform .25s}
+  .mbar.show{transform:none}
+  .mbar b{display:block;font-family:var(--font-display);font-size:.95rem}
+  .mbar small{color:var(--muted);font-size:.78rem}
+  .mbar .btn{padding:11px 18px;white-space:nowrap}
+}
+.request{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;background:var(--surface);border:1px dashed color-mix(in srgb,var(--violet) 50%,var(--line));border-radius:14px;padding:32px}
+.request h2{font-size:clamp(1.3rem,2.6vw,1.8rem)}
+.request p{margin:8px 0 0;color:var(--muted);max-width:56ch}
+@media (max-width:760px){.request{grid-template-columns:1fr;padding:24px}}
+.site-foot [data-social]{display:flex;gap:16px;margin-top:14px}
+.nf{min-height:60vh;display:grid;place-items:center;text-align:center;padding-block:72px}
+.nf .tc404{font-family:var(--font-mono);color:var(--violet-hi);letter-spacing:.1em}
+.nf h1{font-size:clamp(2rem,5vw,3.4rem);margin:12px 0}
+.nf p{color:var(--muted);margin:0 auto 24px;max-width:46ch}

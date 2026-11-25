@@ -31,4 +31,19 @@ Each product in js/products.js has buyUrl (Standard price) and buyUrlPro
 (Pro price). Paste a checkout link into each one and the site shows
 "Buy" buttons. While they're empty the site says payments aren't
 connected yet.
+
+SIGN-UPS AND SOCIAL LINKS (bottom of js/products.js)
+----------------------------------------------------
+VFOX_NEWSLETTER_URL  Paste a Google Form link (one "Email" question) to
+                     collect sign-ups in a Google Sheet. While it's empty,
+                     "Notify me" opens an email to you instead.
+VFOX_SOCIAL          Instagram / YouTube / X links for the footer. Empty
+                     links are hidden.
+
+SEARCH AND SHARING
+------------------
+The site address used for link previews and sitemap.xml is
+https://froodyofficial-maker.github.io/Vfox/. If you move to your own domain,
+tell your developer to update SITE in the page generator, or search-and-replace
+that address in the .html files and sitemap.xml.
 ```

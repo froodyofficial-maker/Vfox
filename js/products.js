@@ -87,3 +87,14 @@ window.VFOX_PRODUCTS = [
 
 /* Contact address shown on the Contact, FAQ and policy pages. */
 window.VFOX_CONTACT_EMAIL = "froodyofficial@gmail.com";
+
+/* "Notify me" sign-up. Paste a Google Form link here to collect emails in a
+   Google Sheet. Left empty, the button opens an email to you instead. */
+window.VFOX_NEWSLETTER_URL = "";
+
+/* Social profiles shown in the footer. Leave a link empty to hide it. */
+window.VFOX_SOCIAL = {
+  instagram: "",   // e.g. "https://instagram.com/yourhandle"
+  youtube: "",     // e.g. "https://youtube.com/@yourchannel"
+  x: ""            // e.g. "https://x.com/yourhandle"
+};

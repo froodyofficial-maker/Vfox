@@ -283,6 +283,12 @@ function renderPDP(){
           <li>${ICON.doc}<span>${p.details?.Format ? esc(p.details.Format) : typeName(p.type)}</span></li>
           <li>${ICON.mail}<span>Questions? <a href="contact.html" style="color:var(--violet-hi)">Contact us</a></span></li>
         </ul>
+        <div class="share" aria-label="Share this product">
+          <span class="mono">Share</span>
+          <a class="share-btn" id="shWa" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="share-btn" id="shX" target="_blank" rel="noopener">X</a>
+          <button class="share-btn" id="shCopy" type="button">Copy link</button>
+        </div>
       </aside>
     </div>
     ${related.length ? `<section style="padding-top:0"><div class="sec-head"><div><span class="eyebrow">More from vfox</span><h2>You might also like</h2></div></div><div class="grid" id="related"></div></section>` : ""}
@@ -308,8 +314,38 @@ function renderPDP(){
       : `<p class="buy-note">Online checkout is opening soon.</p>`;
   };
   updBuy();
-  $$('input[name="lic"]', pdpRoot).forEach(r => r.addEventListener("change", () => { lic = +r.value; updBuy(); }));
+  $$('input[name="lic"]', pdpRoot).forEach(r => r.addEventListener("change", () => { lic = +r.value; updBuy(); updBar(); }));
   $("#pdpAdd").addEventListener("click", () => addToCart(p.id, lic));
+
+  /* share */
+  const link = location.href.split("#")[0] + "#" + encodeURIComponent(p.id);
+  const msg = `${p.name}: ${p.short}`;
+  $("#shWa").href = "https://wa.me/?text=" + encodeURIComponent(msg + " " + link);
+  $("#shX").href = "https://x.com/intent/post?text=" + encodeURIComponent(msg) + "&url=" + encodeURIComponent(link);
+  $("#shCopy").addEventListener("click", () => {
+    (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => toast("Link copied"), () => toast(link));
+  });
+
+  /* product data for Google */
+  let ld = $("#ld-product"); if (!ld) { ld = document.createElement("script"); ld.type = "application/ld+json"; ld.id = "ld-product"; document.head.appendChild(ld); }
+  const abs = u => new URL(u, location.href).href;
+  ld.textContent = JSON.stringify({
+    "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.description || p.short,
+    image: [p.poster, ...(p.gallery||[])].filter(Boolean).map(abs), brand: { "@type": "Brand", name: "vfox" }, sku: p.id,
+    offers: { "@type": "AggregateOffer", priceCurrency: "INR", lowPrice: p.price, highPrice: hasPro(p) ? p.pricePro : p.price, offerCount: hasPro(p) ? 2 : 1, availability: "https://schema.org/InStock", url: link }
+  });
+  const md = $('meta[name="description"]'); if (md) md.setAttribute("content", `${p.name}: ${p.short} From ${fmt(p.price)}.`);
+
+  /* sticky buy bar on phones, shown once the main Add to cart button scrolls away */
+  let bar = $("#mbar");
+  if (!bar) { bar = document.createElement("div"); bar.id = "mbar"; bar.className = "mbar"; document.body.appendChild(bar); }
+  bar.innerHTML = `<span><b>${esc(p.name)}</b><small id="mbarLic"></small></span><button class="btn btn-primary" type="button" id="mbarAdd"></button>`;
+  function updBar(){ $("#mbarLic").textContent = `${LIC[lic]} license`; $("#mbarAdd").textContent = `Add · ${fmt(priceFor(p,lic))}`; }
+  updBar();
+  $("#mbarAdd").onclick = () => addToCart(p.id, lic);
+  if (window._mbarIO) window._mbarIO.disconnect();
+  window._mbarIO = new IntersectionObserver(es => bar.classList.toggle("show", !es[0].isIntersecting && es[0].boundingClientRect.top < 0));
+  window._mbarIO.observe($("#pdpAdd"));
   const rel = $("#related"); if (rel) related.forEach(x => rel.appendChild(card(x)));
   syncAddButtons();
   scrollTo(0, 0);
@@ -433,7 +469,25 @@ addEventListener("keydown", e => { if (e.key === "Escape") { closeModal(); close
 /* ---------- Menu, newsletter, contact ---------- */
 const menuBtn = $("#menuBtn"), links = $(".nav-links");
 if (menuBtn) menuBtn.addEventListener("click", () => { const open = links.classList.toggle("open"); menuBtn.setAttribute("aria-expanded", open); });
-$$(".signup").forEach(f => f.addEventListener("submit", e => { e.preventDefault(); toast("Thanks! You're on the list for new drops."); f.reset(); }));
+const NEWS = window.VFOX_NEWSLETTER_URL || "";
+const mailto = (subject, body) => `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+$$(".signup").forEach(f => {
+  if (NEWS) { const input = $("input", f); if (input) input.remove(); const b = $("button", f); b.type = "button"; b.textContent = "Get notified of new drops"; b.addEventListener("click", () => window.open(NEWS, "_blank", "noopener")); return; }
+  f.addEventListener("submit", e => {
+    e.preventDefault();
+    const em = ($("input", f)?.value || "").trim();
+    location.href = mailto("Notify me about new vfox drops", `Please email me at ${em} when new vfox effects are released.`);
+    toast("Opening your email app. Send the email to join the list.");
+    f.reset();
+  });
+});
+$$("[data-request]").forEach(a => a.setAttribute("href", mailto("Effect request", "Hi vfox,\n\nI'd like an effect that...\n\nWhat I'm making:\nSoftware I use:\n")));
+const SOCIAL = window.VFOX_SOCIAL || {};
+const socialNames = { instagram: "Instagram", youtube: "YouTube", x: "X" };
+$$("[data-social]").forEach(nav => {
+  const links = Object.entries(socialNames).filter(([k]) => SOCIAL[k]).map(([k,n]) => `<a href="${esc(SOCIAL[k])}" target="_blank" rel="noopener">${n}</a>`);
+  if (links.length) { nav.insertAdjacentHTML("beforeend", links.join("")); nav.hidden = false; }
+});
 $$("[data-email]").forEach(el => el.textContent = EMAIL);
 $$("a[data-email-link]").forEach(a => { a.href = "mailto:" + EMAIL; a.textContent = EMAIL; });
 $$("[data-copy-email]").forEach(b => b.addEventListener("click", () => {
