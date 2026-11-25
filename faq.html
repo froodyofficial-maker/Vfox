@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FAQ · vfox</title>
+<title>Help & FAQ · vfox</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="vfox sells After Effects project files and stock footage for video editors. Prices in ₹.">
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,10 +13,16 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div class="announce"><div class="wrap"><span><b>New:</b> Proton Beam, a 3D energy beam for After Effects</span><span>Instant digital download · Prices in ₹</span></div></div>
 <nav class="nav" aria-label="Main">
   <div class="wrap">
     <a class="brand" href="index.html" aria-label="vfox home"><img src="assets/logo.png" alt="vfox"></a>
-    <ul class="nav-links"><li><a href="after-effects.html">After Effects</a></li><li><a href="stock-footage.html">Stock Footage</a></li><li><a href="licenses.html">Licenses</a></li><li><a href="faq.html" aria-current="page">FAQ</a></li></ul>
+    <ul class="nav-links"><li><a href="shop.html">Shop all</a></li><li><a href="after-effects.html">After Effects</a></li><li><a href="stock-footage.html">Stock Footage</a></li><li><a href="licenses.html">Licenses</a></li><li><a href="faq.html" aria-current="page">Help</a></li></ul>
+    <div class="search" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q-faq" type="search" placeholder="Search effects" aria-label="Search products" autocomplete="off">
+      <div class="search-results" hidden></div>
+    </div>
     <button class="cart-btn" data-cart-open aria-label="Open cart">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
       <span class="lbl">Cart</span><span class="cart-count" data-cart-count>0</span>
@@ -24,43 +31,48 @@
   </div>
 </nav>
 <header class="page-head"><div class="wrap">
-  <div><span class="eyebrow">Help</span><h1>FAQ &amp; support</h1><p>Answers to the common questions. Anything else, get in touch.</p></div>
+  <div><span class="eyebrow">Help</span><h1>FAQ</h1><p>Answers to common questions. Anything else, <a href="contact.html" style="color:var(--violet-hi)">contact us</a>.</p></div>
 </div></header>
 <main><section><div class="wrap faq">
   <div class="contact-card">
-    <h3>Contact</h3>
-    <p>Problem with a download, or a question before you buy? Email us and we'll reply within a day.</p>
+    <h3>Still stuck?</h3>
+    <p>Email us and we'll get back to you.</p>
     <code data-email></code>
     <button class="btn btn-ghost" data-copy-email>Copy email address</button>
   </div>
   <div>
     <details open><summary>What do I get when I buy an effect?</summary>
       <p>The After Effects project file (.aep). Open it, move the effect where you want it in your shot, adjust the controls and render.</p></details>
+    <details><summary>How do I receive my files?</summary>
+      <p>Everything is digital. After a successful payment you get a download link straight away. See our <a href="delivery-policy.html">Delivery Policy</a>.</p></details>
     <details><summary>Do I need any plugins?</summary>
-      <p>No. Proton Beam is built only with effects that come with After Effects. If a future product needs a plugin, its tags will say so.</p></details>
+      <p>Not for Proton Beam. It's built only with effects that come with After Effects. Each product page lists its requirements under Technical details.</p></details>
     <details><summary>How do I position the Proton Beam?</summary>
       <p>Move the two 3D points, Wand_Tip_3D (where the beam starts) and Beam_Target_3D (where it hits). Use the BEAM_CTRL layer to set when it fires and stops, its intensity and how chaotic the arcs are.</p></details>
+    <details><summary>Which license do I need?</summary>
+      <p>Standard if you earn under ₹50 lakh a month, Pro if you earn more. Both allow the same uses. See <a href="licenses.html">Licenses</a>.</p></details>
     <details><summary>Why is there a logo on the preview videos?</summary>
       <p>The previews are watermarked so they can't be used as free stock footage. The project file you buy has no watermark.</p></details>
-    <details><summary>Which license do I need?</summary>
-      <p>Standard if you earn under ₹50 lakh a month, Pro if you earn more. Both allow the same uses. See <a href="licenses.html">Licenses</a> for details.</p></details>
-    <details><summary>How do I get my files after purchase?</summary>
-      <p>You get a download link right after checkout.</p></details>
     <details><summary>Can I get a refund?</summary>
-      <p>Because files are digital, sales are final once downloaded. If a file is broken or doesn't match its description, email us and we'll fix it or refund you.</p></details>
+      <p>Digital downloads can't be returned, but we refund if a file is faulty and we can't fix it, if you never received it, or if you were charged twice. See the <a href="refund-policy.html">Refund &amp; Cancellation Policy</a>.</p></details>
   </div>
 </div></section></main>
 <footer class="site-foot">
   <div class="wrap">
-    <a href="index.html"><img src="assets/logo.png" alt="vfox"></a>
-    <form class="signup">
-      <input id="email-foot" type="email" placeholder="Email for new drops" aria-label="Email address" required>
-      <button class="btn btn-primary" type="submit">Notify me</button>
-    </form>
-    <nav aria-label="Footer">
-      <a href="after-effects.html">After Effects</a><a href="stock-footage.html">Stock Footage</a><a href="licenses.html">Licenses</a><a href="faq.html">FAQ</a>
-    </nav>
-    <small>© 2026 vfox. All prices in Indian rupees (₹).</small>
+    <div class="cols">
+      <div class="about">
+        <a href="index.html"><img src="assets/logo.png" alt="vfox"></a>
+        <p>After Effects projects and stock footage for video editors and creators. Made in India.</p>
+        <form class="signup">
+          <input id="email-foot" type="email" placeholder="Email for new drops" aria-label="Email address" required>
+          <button class="btn btn-primary" type="submit">Notify me</button>
+        </form>
+      </div>
+      <div><h4>Shop</h4><nav aria-label="Shop"><a href="shop.html">All products</a><a href="after-effects.html">After Effects</a><a href="stock-footage.html">Stock Footage</a><a href="cart.html">Cart</a></nav></div>
+      <div><h4>Help</h4><nav aria-label="Help"><a href="faq.html">FAQ</a><a href="licenses.html">Licenses</a><a href="contact.html">Contact us</a></nav></div>
+      <div><h4>Policies</h4><nav aria-label="Policies"><a href="terms.html">Terms &amp; Conditions</a><a href="refund-policy.html">Refund &amp; Cancellation</a><a href="delivery-policy.html">Delivery Policy</a><a href="privacy-policy.html">Privacy Policy</a></nav></div>
+    </div>
+    <div class="bottom"><span>© 2026 vfox. All prices in Indian rupees (₹).</span><span>Digital products only. Nothing is shipped.</span></div>
   </div>
 </footer>
 <script src="js/products.js"></script>
