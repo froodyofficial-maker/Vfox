@@ -68,4 +68,4 @@ window.VFOX_PRODUCTS = [
 window.VFOX_BUNDLE = null;
 
 /* Contact address shown on the FAQ page. */
-window.VFOX_CONTACT_EMAIL = "hello@yourdomain.com";
+window.VFOX_CONTACT_EMAIL = "froodyofficial@gmail.com";
