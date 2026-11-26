@@ -457,14 +457,18 @@ async function startCheckout(btn){
 
 /* ---------- Your downloads / Find my order ---------- */
 const orderRoot = $("#orderPage");
+const sizeStr = n => !n ? "" : n < 1048576 ? (n/1024).toFixed(0) + " KB" : n < 1073741824 ? (n/1048576).toFixed(1) + " MB" : (n/1073741824).toFixed(2) + " GB";
 function renderLinks(o){
   const when = new Date(o.expires).toLocaleString("en-IN", { day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
   return `<div class="dl-box">
     <span class="eyebrow">Payment ${esc(o.payment_id)}</span>
     <h2>Your downloads</h2>
     <div class="dl-list">${o.links.map(l => `
-      <div class="dl-row"><span><b>${esc(l.name)}</b><small>${esc(l.license)} license · ${l.downloads_left} of ${o.max_downloads} downloads left</small></span>
-      ${l.downloads_left > 0 ? `<a class="btn btn-primary" href="${esc(l.url)}">Download</a>` : `<span class="mono">Limit reached</span>`}</div>`).join("")}
+      <div class="dl-product"><b>${esc(l.name)}</b><small>${esc(l.license)} license</small></div>
+      ${(l.files||[]).length ? l.files.map(f => `
+      <div class="dl-row"><span><b class="fname">${esc(f.name)}</b><small>${sizeStr(f.size)} · ${f.downloads_left} of ${o.max_downloads} downloads left</small></span>
+      ${f.downloads_left > 0 ? `<a class="btn btn-primary" href="${esc(f.url)}">Download</a>` : `<span class="mono">Limit reached</span>`}</div>`).join("")
+      : `<div class="dl-row"><span><small>Your files are being prepared. Please <a href="contact.html" style="color:var(--violet-hi)">contact us</a> with your payment ID.</small></span></div>`}`).join("")}
     </div>
     <p class="notice">These links work until <b>${esc(when)}</b> (${o.hours} hours). Save your payment ID <code>${esc(o.payment_id)}</code>: with it and your email you can get fresh links below any time.</p>
   </div>`;

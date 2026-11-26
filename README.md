@@ -29,7 +29,7 @@ PAYMENTS AND DOWNLOADS
 ----------------------
 Checkout runs through a small Cloudflare worker (worker/worker.js) that
 takes payment with Razorpay and gives each buyer personal download links
-(24 hours, 5 downloads per product). Product files live in a PRIVATE repo.
+(24 hours, 5 downloads per file). Product files live in a PRIVATE repo.
 One-time setup: see worker/SETUP.md. Until VFOX_API_URL is set in
 js/products.js, checkout shows "opening soon".
 

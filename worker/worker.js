@@ -11,6 +11,10 @@
                               count) and streams the file from the private
                               GitHub repo
 
+   FILES: each product has a folder in the private repo named after its id
+   (e.g. proton-beam/). Every file in that folder (.aep, .mp4, .mov, .zip,
+   anything) gets its own download button. No file names in this code.
+
    Settings (Cloudflare dashboard → your worker → Settings → Variables)
    Variables:  SITE_ORIGIN      e.g. https://froodyofficial-maker.github.io
                FILES_REPO       e.g. froodyofficial-maker/vfox-files
@@ -20,7 +24,8 @@
    KV binding: ORDERS
 
    ADDING A PRODUCT: add a line to CATALOG (same id and prices as
-   js/products.js) and upload "<id>.zip" to the private files repo.
+   js/products.js) and upload its files into a folder named <id> in the
+   private files repo.
    ===================================================================== */
 
 const CATALOG = {
@@ -29,7 +34,21 @@ const CATALOG = {
   "gun-muzzle-flash-stock": { name: "Gun Muzzle Flash (Stock Footage)", price: 19 },
 };
 
-const fileFor = id => `${id}.zip`;
+const TYPES = { aep: "application/octet-stream", aepx: "application/xml", mp4: "video/mp4", mov: "video/quicktime", m4v: "video/mp4", webm: "video/webm", zip: "application/zip", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", pdf: "application/pdf", wav: "audio/wav", mp3: "audio/mpeg", txt: "text/plain" };
+const typeFor = name => TYPES[(name.split(".").pop() || "").toLowerCase()] || "application/octet-stream";
+const ghPath = (...parts) => parts.map(p => encodeURIComponent(p)).join("/");
+function gh(env, path, raw) {
+  return fetch(`https://api.github.com/repos/${env.FILES_REPO}/contents/${path}`, {
+    headers: { "authorization": `Bearer ${env.GITHUB_TOKEN}`, "accept": raw ? "application/vnd.github.raw+json" : "application/vnd.github+json", "user-agent": "vfox-worker", "x-github-api-version": "2022-11-28" },
+  });
+}
+/* list the files in a product's folder (skips sub-folders and hidden files like .gitkeep) */
+async function listFiles(env, id) {
+  const res = await gh(env, ghPath(id));
+  if (!res.ok) { console.error("GitHub folder list failed", res.status, id); return []; }
+  const list = await res.json();
+  return (Array.isArray(list) ? list : []).filter(f => f.type === "file" && !f.name.startsWith(".")).map(f => ({ name: f.name, size: f.size }));
+}
 const LIC_NAME = { 1: "Standard", 2: "Pro" };
 const enc = new TextEncoder();
 
@@ -166,14 +185,17 @@ async function linksFor(env, record, url) {
   const base = url.origin;
   const links = [];
   for (const it of record.items) {
-    const msg = `${record.payment_id}|${it.id}|${exp}`;
-    const sig = await hmacHex(env.LINK_SECRET, msg);
-    const used = record.downloads?.[it.id] || 0;
-    links.push({
-      id: it.id, name: CATALOG[it.id].name, license: LIC_NAME[it.lic],
-      url: `${base}/dl/${encodeURIComponent(record.payment_id)}/${encodeURIComponent(it.id)}?exp=${exp}&sig=${sig}`,
-      downloads_left: Math.max(0, maxDl(env) - used),
-    });
+    const files = [];
+    for (const f of await listFiles(env, it.id)) {
+      const sig = await hmacHex(env.LINK_SECRET, `${record.payment_id}|${it.id}|${f.name}|${exp}`);
+      const used = record.downloads?.[`${it.id}/${f.name}`] || 0;
+      files.push({
+        name: f.name, size: f.size,
+        url: `${base}/dl/${encodeURIComponent(record.payment_id)}/${encodeURIComponent(it.id)}/${encodeURIComponent(f.name)}?exp=${exp}&sig=${sig}`,
+        downloads_left: Math.max(0, maxDl(env) - used),
+      });
+    }
+    links.push({ id: it.id, name: CATALOG[it.id].name, license: LIC_NAME[it.lic], files });
   }
   return { payment_id: record.payment_id, expires: exp, hours: hours(env), max_downloads: maxDl(env), links };
 }
@@ -186,29 +208,29 @@ function page(title, text, status) {
   return new Response(html, { status, headers: { "content-type": "text/html; charset=utf-8" } });
 }
 async function download(url, env) {
-  const [, , pid, id] = url.pathname.split("/").map(decodeURIComponent);
+  const [, , pid, id, name] = url.pathname.split("/").map(decodeURIComponent);
   const exp = Number(url.searchParams.get("exp")), sig = url.searchParams.get("sig") || "";
-  if (!pid || !CATALOG[id] || !exp) return page("Link not valid", "This download link is incomplete. Use the link from your order page.", 400);
-  const expected = await hmacHex(env.LINK_SECRET, `${pid}|${id}|${exp}`);
+  if (!pid || !CATALOG[id] || !name || name.includes("/") || name.startsWith(".") || !exp) return page("Link not valid", "This download link is incomplete. Use the link from your order page.", 400);
+  const expected = await hmacHex(env.LINK_SECRET, `${pid}|${id}|${name}|${exp}`);
   if (!safeEqual(expected, sig)) return page("Link not valid", "This download link isn't valid. Use the link from your order page.", 403);
   if (Date.now() > exp) return page("Link expired", "This link has expired. Get a fresh one from Find my order on the vfox site, using your payment ID and email.", 410);
   const record = await env.ORDERS.get("pay:" + pid, "json");
   if (!record || !record.items.some(it => it.id === id)) return page("Order not found", "We couldn't find this order. Please contact us.", 404);
-  const used = record.downloads?.[id] || 0;
-  if (used >= maxDl(env)) return page("Download limit reached", `This purchase has been downloaded ${used} times, which is the limit. Contact us if you need it again.`, 429);
+  const key = `${id}/${name}`;
+  const used = record.downloads?.[key] || 0;
+  if (used >= maxDl(env)) return page("Download limit reached", `This file has been downloaded ${used} times, which is the limit for one purchase. Contact us if you need it again.`, 429);
 
-  const gh = await fetch(`https://api.github.com/repos/${env.FILES_REPO}/contents/${encodeURIComponent(fileFor(id))}`, {
-    headers: { "authorization": `Bearer ${env.GITHUB_TOKEN}`, "accept": "application/vnd.github.raw+json", "user-agent": "vfox-worker", "x-github-api-version": "2022-11-28" },
-  });
-  if (!gh.ok) { console.error("GitHub file fetch failed", gh.status, fileFor(id)); return page("File unavailable", "This file is temporarily unavailable. Please try again later or contact us.", 502); }
+  const file = await gh(env, ghPath(id, name), true);
+  if (!file.ok) { console.error("GitHub file fetch failed", file.status, key); return page("File unavailable", "This file is temporarily unavailable. Please try again later or contact us.", 502); }
 
-  record.downloads = { ...(record.downloads || {}), [id]: used + 1 };
+  record.downloads = { ...(record.downloads || {}), [key]: used + 1 };
   await env.ORDERS.put("pay:" + pid, JSON.stringify(record));
-  return new Response(gh.body, {
+  const safeName = name.replace(/["\\\r\n]/g, "_");
+  return new Response(file.body, {
     headers: {
-      "content-type": "application/zip",
-      "content-disposition": `attachment; filename="${fileFor(id)}"`,
-      ...(gh.headers.get("content-length") ? { "content-length": gh.headers.get("content-length") } : {}),
+      "content-type": typeFor(name),
+      "content-disposition": `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(name)}`,
+      ...(file.headers.get("content-length") ? { "content-length": file.headers.get("content-length") } : {}),
       "cache-control": "no-store",
     },
   });

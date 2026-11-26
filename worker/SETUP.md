@@ -6,7 +6,7 @@ Razorpay's normal fee per payment.
 
 **How it works:** buyers pay in Razorpay's window on your site. A small program (the
 "worker") on Cloudflare checks the payment really happened, then gives the buyer download
-links that only work for **24 hours** and **5 downloads per product**. Your files sit in a
+links that only work for **24 hours** and **5 downloads per file**. Your files sit in a
 **private** GitHub repo that nobody else can see. You never have to change links: every
 buyer gets their own automatically.
 
@@ -19,16 +19,31 @@ buyer gets their own automatically.
 ## 1. Put your product files in a private repo
 
 1. On GitHub, click **New repository**. Name it `vfox-files` and choose **Private**.
-2. Zip each product's files and name each zip **exactly** after the product's id:
+2. Make one **folder per product**, named **exactly** after the product's id, and put
+   the files in it as they are (`.aep`, `.mp4`, `.mov`, anything; no need to zip):
 
-   | Product | File name |
-   |---|---|
-   | Proton Beam | `proton-beam.zip` |
-   | Gun Muzzle Flash (After Effects) | `gun-muzzle-flash.zip` |
-   | Gun Muzzle Flash (Stock Footage) | `gun-muzzle-flash-stock.zip` |
+   ```
+   vfox-files/
+     proton-beam/              proton_beam.aep
+     gun-muzzle-flash/         your .aep (+ any footage or images it uses)
+     gun-muzzle-flash-stock/   your .mp4 / .mov
+   ```
 
-3. In `vfox-files`, click **Add file → Upload files** and drag the zips in. Commit.
-   (Uploading through the website works for files up to 25 MB each.)
+   Buyers get a separate **Download** button for every file in the product's folder.
+
+3. Easiest way to upload: on your computer, make a folder called e.g. `proton-beam`
+   with the files inside. In `vfox-files` click **Add file → Upload files** and drag the
+   **whole folder** in. Commit.
+
+> **After Effects projects:** an `.aep` only opens cleanly on someone else's computer if
+> everything it uses is with it. If a project uses outside footage or images (smoke
+> clips, textures), put those files in the same folder too, or the buyer will see
+> "missing footage". (In After Effects, **File → Dependencies → Collect Files** gathers
+> a project and everything it uses into one folder for you.)
+
+> **File size:** uploading through the GitHub website works for files up to **25 MB**.
+> For bigger files (up to 100 MB each) use the free **GitHub Desktop** app. GitHub doesn't
+> accept single files over 100 MB, so very large 4K packs would need different storage.
 
 ## 2. Create a read-only GitHub token
 
@@ -98,7 +113,7 @@ replace `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in Cloudflare with the live 
 ## Everyday tasks
 
 **Add a product**
-1. Upload `<product-id>.zip` to `vfox-files`.
+1. Upload its files into a folder named `<product-id>` in `vfox-files`.
 2. Add the product to `js/products.js` (website).
 3. Add one line to `CATALOG` at the top of the worker code (Cloudflare → Edit code → Deploy),
    with the **same id and prices**:
@@ -107,11 +122,12 @@ replace `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in Cloudflare with the live 
    ```
    The worker's prices are what buyers are actually charged.
 
-**Update a product's files:** upload a new zip with the same name to `vfox-files`.
-New downloads get the new version.
+**Update a product's files:** upload the new version into the product's folder with the same
+file name (it replaces the old one). Add or delete files in the folder and buyers' download
+pages change to match.
 
 **A buyer used up their downloads:** Cloudflare → KV → `vfox-orders` → find the key
-`pay:pay_XXXX` → edit and set that product's number in `"downloads"` back to `0`.
+`pay:pay_XXXX` → edit and set that file's number in `"downloads"` back to `0`.
 
 **Refunds:** issue them from the Razorpay dashboard as usual.
 

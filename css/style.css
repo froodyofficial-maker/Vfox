@@ -510,3 +510,7 @@ tr:last-child td{border-bottom:0}
 .findbox form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
 .findbox input{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 14px;color:var(--fg);font:inherit;min-width:0}
 @media (max-width:760px){.findbox form{grid-template-columns:1fr}.dl-row{flex-direction:column;align-items:flex-start}}
+.dl-product{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.dl-product b{font-family:var(--font-display);font-size:1rem}
+.dl-product small{color:var(--muted);font-size:.82rem}
+.dl-row .fname{font-family:var(--font-mono);font-size:.9rem;font-weight:500;word-break:break-all}
