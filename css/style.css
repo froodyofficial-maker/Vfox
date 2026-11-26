@@ -493,3 +493,20 @@ tr:last-child td{border-bottom:0}
 .nf .tc404{font-family:var(--font-mono);color:var(--violet-hi);letter-spacing:.1em}
 .nf h1{font-size:clamp(2rem,5vw,3.4rem);margin:12px 0}
 .nf p{color:var(--muted);margin:0 auto 24px;max-width:46ch}
+
+/* ---------- Downloads / find my order ---------- */
+.orderwrap{display:grid;gap:28px;max-width:760px;padding-block:20px 72px}
+.paid{margin:0;color:#7ee2a8;font-weight:600}
+.dl-box{background:var(--surface);border:1px solid color-mix(in srgb,var(--violet) 45%,var(--line));border-radius:14px;padding:24px;display:grid;gap:16px}
+.dl-box h2{font-size:1.4rem}
+.dl-list{display:grid;gap:10px}
+.dl-row{display:flex;justify-content:space-between;align-items:center;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.dl-row b{display:block}
+.dl-row small{color:var(--muted);font-size:.82rem}
+.dl-box code{font-family:var(--font-mono);color:#fff}
+.findbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:grid;gap:14px}
+.findbox h2{font-size:1.2rem}
+.findbox p{margin:0;color:var(--muted)}
+.findbox form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+.findbox input{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 14px;color:var(--fg);font:inherit;min-width:0}
+@media (max-width:760px){.findbox form{grid-template-columns:1fr}.dl-row{flex-direction:column;align-items:flex-start}}

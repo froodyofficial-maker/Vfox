@@ -5,6 +5,7 @@
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const PRODUCTS = (window.VFOX_PRODUCTS || []).filter(p => p && p.id);
 const EMAIL = window.VFOX_CONTACT_EMAIL || "";
+const API = (window.VFOX_API_URL || "").replace(/\/+$/, "");
 const byId = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
 const $ = (s, el=document) => el.querySelector(s);
 const $$ = (s, el=document) => [...el.querySelectorAll(s)];
@@ -309,9 +310,13 @@ function renderPDP(){
   const updBuy = () => {
     $("#pdpPrice").textContent = fmt(priceFor(p, lic));
     const url = payUrl(p, lic);
-    $("#pdpBuyWrap").innerHTML = url
+    $("#pdpBuyWrap").innerHTML = API
+      ? `<button class="btn btn-ghost" style="width:100%" type="button" id="pdpBuyNow">Buy now · ${fmt(priceFor(p,lic))}</button>`
+      : url
       ? `<a class="btn btn-ghost" style="width:100%" href="${esc(url)}" target="_blank" rel="noopener">Buy now · ${fmt(priceFor(p,lic))}</a>`
       : `<p class="buy-note">Online checkout is opening soon.</p>`;
+    const bn = $("#pdpBuyNow");
+    if (bn) bn.onclick = () => { addToCart(p.id, lic); location.href = "cart.html#checkout"; };
   };
   updBuy();
   $$('input[name="lic"]', pdpRoot).forEach(r => r.addEventListener("change", () => { lic = +r.value; updBuy(); updBar(); }));
@@ -359,7 +364,7 @@ function renderCartPage(){
     root.innerHTML = `<div style="padding-block:24px 72px">${emptyState("Your cart is empty", `Find something for your next edit in the <a href="shop.html" style="color:var(--violet-hi)">shop</a>.`)}</div>`;
     return;
   }
-  const allPay = cart.every(x => payUrl(byId[x.id], x.lic));
+  const allPay = !API && cart.every(x => payUrl(byId[x.id], x.lic));
   root.innerHTML = `
   <div class="cartpage">
     <div class="citems">
@@ -384,7 +389,9 @@ function renderCartPage(){
       <div class="row"><span>Delivery</span><span>Digital download</span></div>
       <div class="row total"><span>Total</span><b>${fmt(cartTotal())}</b></div>
       <div id="payArea">
-        ${allPay ? `<button class="btn btn-primary" style="width:100%" id="payBtn">Proceed to payment</button>`
+        ${API ? `<button class="btn btn-primary" style="width:100%" id="rzpBtn">Pay ${fmt(cartTotal())} securely</button>
+             <p class="mono" style="margin:10px 0 0;color:var(--muted);text-align:center">UPI, cards, netbanking and wallets</p>`
+        : allPay ? `<button class="btn btn-primary" style="width:100%" id="payBtn">Proceed to payment</button>`
           : `<button class="btn btn-primary" style="width:100%" disabled aria-disabled="true">Checkout opening soon</button>
              <p class="notice" style="margin:12px 0 0">Online checkout is opening soon. Your cart is saved on this device, so you can come back to it.</p>`}
       </div>
@@ -392,10 +399,91 @@ function renderCartPage(){
     </aside>
   </div>`;
   $$("[data-lic-for]", root).forEach(s => s.addEventListener("change", () => setLic(s.dataset.licFor, +s.value)));
+  const rb = $("#rzpBtn", root);
+  if (rb) rb.addEventListener("click", () => startCheckout(rb));
   const pb = $("#payBtn", root);
   if (pb) pb.addEventListener("click", () => {
     $("#payArea").innerHTML = `<div class="paylist" style="padding:0"><p>${cart.length > 1 ? "Each item has its own secure checkout. Pay for each one:" : "Continue to the secure checkout page:"}</p>
       ${cart.map(({id,lic}) => { const p = byId[id]; return `<a class="btn btn-primary" href="${esc(payUrl(p,lic))}" target="_blank" rel="noopener">Pay ${fmt(priceFor(p,lic))} · ${esc(p.name)} ↗</a>`; }).join("")}</div>`;
+  });
+}
+
+/* ---------- Checkout through the vfox worker + Razorpay ---------- */
+async function api(path, data){
+  const res = await fetch(API + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(data) });
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(out.error || "Something went wrong. Please try again.");
+  return out;
+}
+function loadRazorpay(){
+  if (window.Razorpay) return Promise.resolve();
+  return new Promise((ok, fail) => {
+    const sc = document.createElement("script"); sc.src = "https://checkout.razorpay.com/v1/checkout.js";
+    sc.onload = ok; sc.onerror = () => fail(new Error("Couldn't load the payment window. Check your connection and try again."));
+    document.head.appendChild(sc);
+  });
+}
+function saveOrderLocal(o){ try { sessionStorage.setItem("vfox-order", JSON.stringify(o)); } catch(e) {} }
+async function startCheckout(btn){
+  const label = btn.textContent; btn.disabled = true; btn.textContent = "Opening secure checkout…";
+  const reset = () => { btn.disabled = false; btn.textContent = label; };
+  try {
+    await loadRazorpay();
+    const order = await api("/api/create-order", { items: cart });
+    const rzp = new window.Razorpay({
+      key: order.key, order_id: order.order_id, amount: order.amount, currency: order.currency,
+      name: "vfox", description: order.items.map(i => i.name).join(", "),
+      image: new URL("assets/icon-192.png", location.href).href,
+      theme: { color: "#8b4dff" },
+      modal: { ondismiss: reset },
+      handler: async resp => {
+        btn.textContent = "Confirming payment…";
+        try {
+          const result = await api("/api/verify", resp);
+          saveOrderLocal(result);
+          cart = []; renderAllCart();
+          location.href = "order.html";
+        } catch (e) {
+          reset();
+          toast(e.message);
+          location.href = "order.html#" + encodeURIComponent(resp.razorpay_payment_id || "");
+        }
+      },
+    });
+    rzp.on("payment.failed", r => { toast((r && r.error && r.error.description) || "Payment failed. You haven't been charged."); });
+    rzp.open();
+  } catch (e) { reset(); toast(e.message); }
+}
+
+/* ---------- Your downloads / Find my order ---------- */
+const orderRoot = $("#orderPage");
+function renderLinks(o){
+  const when = new Date(o.expires).toLocaleString("en-IN", { day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
+  return `<div class="dl-box">
+    <span class="eyebrow">Payment ${esc(o.payment_id)}</span>
+    <h2>Your downloads</h2>
+    <div class="dl-list">${o.links.map(l => `
+      <div class="dl-row"><span><b>${esc(l.name)}</b><small>${esc(l.license)} license · ${l.downloads_left} of ${o.max_downloads} downloads left</small></span>
+      ${l.downloads_left > 0 ? `<a class="btn btn-primary" href="${esc(l.url)}">Download</a>` : `<span class="mono">Limit reached</span>`}</div>`).join("")}
+    </div>
+    <p class="notice">These links work until <b>${esc(when)}</b> (${o.hours} hours). Save your payment ID <code>${esc(o.payment_id)}</code>: with it and your email you can get fresh links below any time.</p>
+  </div>`;
+}
+if (orderRoot) {
+  const out = $("#orderOut"), form = $("#findForm");
+  let saved = null; try { saved = JSON.parse(sessionStorage.getItem("vfox-order") || "null"); } catch(e) {}
+  if (saved && saved.links) out.innerHTML = `<p class="paid">✓ Payment successful. Thank you!</p>` + renderLinks(saved);
+  const hashId = decodeURIComponent(location.hash.slice(1));
+  if (hashId.startsWith("pay_")) $("#fPay").value = hashId;
+  if (!API) { form.querySelector("button").disabled = true; $("#findNote").textContent = "Order lookup opens when online checkout goes live."; }
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const b = $("button", form); b.disabled = true; b.textContent = "Finding your order…";
+    try {
+      const o = await api("/api/find-order", { payment_id: $("#fPay").value, email: $("#fEmail").value });
+      saveOrderLocal(o); out.innerHTML = renderLinks(o); out.scrollIntoView({ block: "start" });
+    } catch (err) { toast(err.message); }
+    b.disabled = false; b.textContent = "Get my download links";
   });
 }
 

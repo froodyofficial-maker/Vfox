@@ -25,12 +25,13 @@ Hostinger...). Never put the .aep project files in this folder: anything here
 can be downloaded for free.
 
 
-PAYMENTS
---------
-Each product in js/products.js has buyUrl (Standard price) and buyUrlPro
-(Pro price). Paste a checkout link into each one and the site shows
-"Buy" buttons. While they're empty the site says payments aren't
-connected yet.
+PAYMENTS AND DOWNLOADS
+----------------------
+Checkout runs through a small Cloudflare worker (worker/worker.js) that
+takes payment with Razorpay and gives each buyer personal download links
+(24 hours, 5 downloads per product). Product files live in a PRIVATE repo.
+One-time setup: see worker/SETUP.md. Until VFOX_API_URL is set in
+js/products.js, checkout shows "opening soon".
 
 SIGN-UPS AND SOCIAL LINKS (bottom of js/products.js)
 ----------------------------------------------------

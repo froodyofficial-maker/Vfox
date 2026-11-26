@@ -155,6 +155,11 @@ window.VFOX_PRODUCTS = [
 /* Contact address shown on the Contact, FAQ and policy pages. */
 window.VFOX_CONTACT_EMAIL = "froodyofficial@gmail.com";
 
+/* Checkout. Paste your Cloudflare worker's address here (see
+   worker/SETUP.md), e.g. "https://vfox-checkout.yourname.workers.dev".
+   Left empty, checkout shows "opening soon". */
+window.VFOX_API_URL = "";
+
 /* "Notify me" sign-up. Paste a Google Form link here to collect emails in a
    Google Sheet. Left empty, the button opens an email to you instead. */
 window.VFOX_NEWSLETTER_URL = "";
