@@ -18,12 +18,12 @@ buyer gets their own automatically.
 
 ## 1. Put your product files in a private repo
 
-1. On GitHub, click **New repository**. Name it `vfox-files` and choose **Private**.
+1. On GitHub, click **New repository**. Name it `vfox-files-private` (yours already exists) and choose **Private**. Check it says **Private** next to its name.
 2. Make one **folder per product**, named **exactly** after the product's id, and put
    the files in it as they are (`.aep`, `.mp4`, `.mov`, anything; no need to zip):
 
    ```
-   vfox-files/
+   vfox-files-private/
      proton-beam/              proton_beam.aep
      gun-muzzle-flash/         your .aep (+ any footage or images it uses)
      gun-muzzle-flash-stock/   your .mp4 / .mov
@@ -32,7 +32,7 @@ buyer gets their own automatically.
    Buyers get a separate **Download** button for every file in the product's folder.
 
 3. Easiest way to upload: on your computer, make a folder called e.g. `proton-beam`
-   with the files inside. In `vfox-files` click **Add file → Upload files** and drag the
+   with the files inside. In `vfox-files-private` click **Add file → Upload files** and drag the
    **whole folder** in. Commit.
 
 > **After Effects projects:** an `.aep` only opens cleanly on someone else's computer if
@@ -47,11 +47,11 @@ buyer gets their own automatically.
 
 ## 2. Create a read-only GitHub token
 
-This lets the worker read `vfox-files` and nothing else.
+This lets the worker read `vfox-files-private` and nothing else.
 
 1. GitHub → your profile picture → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
 2. Name: `vfox worker`. Expiration: the longest offered (put a reminder in your calendar to renew it).
-3. **Repository access:** *Only select repositories* → `vfox-files`.
+3. **Repository access:** *Only select repositories* → `vfox-files-private`.
 4. **Permissions → Repository permissions → Contents:** *Read-only*.
 5. Generate, and copy the token (starts with `github_pat_`). Keep it for step 5.
 
@@ -77,7 +77,7 @@ Worker → **Settings → Variables and Secrets → Add**:
 | Name | Type | Value |
 |---|---|---|
 | `SITE_ORIGIN` | Text | `https://froodyofficial-maker.github.io` |
-| `FILES_REPO` | Text | `froodyofficial-maker/vfox-files` |
+| `FILES_REPO` | Text | `froodyofficial-maker/vfox-files-private` |
 | `LINK_HOURS` | Text | `24` |
 | `MAX_DOWNLOADS` | Text | `5` |
 | `RAZORPAY_KEY_ID` | Secret | Key ID from step 3 |
@@ -113,7 +113,7 @@ replace `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in Cloudflare with the live 
 ## Everyday tasks
 
 **Add a product**
-1. Upload its files into a folder named `<product-id>` in `vfox-files`.
+1. Upload its files into a folder named `<product-id>` in `vfox-files-private`.
 2. Add the product to `js/products.js` (website).
 3. Add one line to `CATALOG` at the top of the worker code (Cloudflare → Edit code → Deploy),
    with the **same id and prices**:

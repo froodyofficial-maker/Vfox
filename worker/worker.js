@@ -17,7 +17,7 @@
 
    Settings (Cloudflare dashboard → your worker → Settings → Variables)
    Variables:  SITE_ORIGIN      e.g. https://froodyofficial-maker.github.io
-               FILES_REPO       e.g. froodyofficial-maker/vfox-files
+               FILES_REPO       e.g. froodyofficial-maker/vfox-files-private
                LINK_HOURS       how long a link works (default 24)
                MAX_DOWNLOADS    downloads per product per purchase (default 5)
    Secrets:    RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, LINK_SECRET, GITHUB_TOKEN
