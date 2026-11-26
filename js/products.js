@@ -41,6 +41,73 @@
 
 window.VFOX_PRODUCTS = [
   {
+    id: "gun-muzzle-flash",
+    type: "ae",
+    name: "Gun Muzzle Flash",
+    short: "A customisable muzzle flash with smoke and a built-in camera shake for After Effects.",
+    description: "Gun Muzzle Flash is an After Effects project that adds a bright muzzle flash and a puff of smoke to any shot of a gun firing. The example video above was made with it.\n\nBecause it's a project file, not a video clip, you can customise both the flash and the smoke to match your shot.\n\nIt also comes with a camera shake that kicks in with the shot to sell the impact. Shake can't be baked into stock footage, so it's only in this After Effects version.\n\nOnly need the flash and smoke as a clip? The stock footage version works in any editor.",
+    price: 49,
+    released: "2026-11-26",
+    specs: ["After Effects", "1920×1080", "29.97 fps", "Camera shake"],
+    includes: [
+      "Gun Muzzle Flash After Effects project file (.aep)",
+      "Customisable muzzle flash",
+      "Customisable smoke",
+      "Camera shake for the impact of each shot"
+    ],
+    steps: [
+      "Open the project in After Effects and drop your footage into the comp.",
+      "Move the flash to the tip of the gun at the frame it fires.",
+      "Adjust the flash and smoke to match your shot.",
+      "Check the camera shake, then render."
+    ],
+    details: {
+      "Software": "Adobe After Effects",
+      "Format": "After Effects project (.aep)",
+      "Example render": "1920×1080, 29.97 fps",
+      "Camera shake": "Included"
+    },
+    duration: "00:00:02:14",
+    poster: "media/muzzle-flash-ae-poster.jpg",
+    preview: "media/muzzle-flash-ae-example.mp4",
+    previewLabel: "EXAMPLE",              // this preview is a finished example, not watermarked
+    buyUrl: "",
+    buyUrlPro: "",
+    featured: true
+  },
+  {
+    id: "gun-muzzle-flash-stock",
+    type: "stock",
+    name: "Gun Muzzle Flash (Stock Footage)",
+    short: "A muzzle flash and smoke on black. Drop it over any video.",
+    description: "A muzzle flash with a puff of smoke, rendered on a black background so you can lay it over any video in any editor.\n\nPut it on the track above your footage, set the blend mode to Screen (or Add), and position it at the tip of the gun.\n\nWant to customise the flash and smoke, or add camera shake? Get the After Effects version.",
+    price: 19,
+    released: "2026-11-26",
+    specs: ["Stock footage", "1920×1080", "29.97 fps", "On black"],
+    includes: [
+      "Muzzle flash and smoke clip on a black background",
+      "1920×1080 at 29.97 fps, 3.5 seconds"
+    ],
+    steps: [
+      "Place the clip on the track above your footage.",
+      "Set its blend mode to Screen (or Add) so the black disappears.",
+      "Move and scale it so the flash sits at the tip of the gun, lined up with the frame it fires."
+    ],
+    details: {
+      "Format": "Video clip on black",
+      "Resolution": "1920×1080",
+      "Frame rate": "29.97 fps",
+      "Length": "3.5 seconds",
+      "Works in": "Any editor with a Screen or Add blend mode (Premiere Pro, After Effects, DaVinci Resolve and others)"
+    },
+    duration: "00:00:03:14",
+    poster: "media/muzzle-flash-stock-poster.jpg",
+    preview: "media/muzzle-flash-stock-preview.mp4",
+    buyUrl: "",
+    buyUrlPro: "",
+    featured: true
+  },
+  {
     id: "proton-beam",
     type: "ae",
     name: "Proton Beam",

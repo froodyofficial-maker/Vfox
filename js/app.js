@@ -269,8 +269,8 @@ function renderPDP(){
         <p class="lead">${esc(p.short)}</p>
         ${p.specs?.length ? `<div class="specs">${p.specs.map(s=>`<span>${esc(s)}</span>`).join("")}</div>` : ""}
         <fieldset class="lic-pick">
-          <legend>Choose your license</legend>
-          <label class="lic-opt"><input type="radio" name="lic" value="1" ${lic===1?"checked":""}><span><b>Standard</b><small>You earn under ₹50 lakh / month</small></span><span class="price">${fmt(p.price)}</span></label>
+          <legend>${hasPro(p) ? "Choose your license" : "License"}</legend>
+          <label class="lic-opt"><input type="radio" name="lic" value="1" ${lic===1||!hasPro(p)?"checked":""}><span><b>Standard</b><small>${hasPro(p) ? "You earn under ₹50 lakh / month" : "One price for every buyer"}</small></span><span class="price">${fmt(p.price)}</span></label>
           ${hasPro(p) ? `<label class="lic-opt"><input type="radio" name="lic" value="2" ${lic===2?"checked":""}><span><b>Pro</b><small>You earn over ₹50 lakh / month</small></span><span class="price">${fmt(p.pricePro)}</span></label>` : ""}
         </fieldset>
         <div class="buy-actions">
@@ -279,7 +279,7 @@ function renderPDP(){
         </div>
         <ul class="perks">
           <li>${ICON.down}Digital download, nothing is shipped</li>
-          <li>${ICON.plug}${(p.specs||[]).some(s=>/no plugins/i.test(s)) ? "No third-party plugins needed" : "Check the technical details for requirements"}</li>
+          <li>${ICON.plug}${p.type==="stock" ? "Works in any video editor" : (p.specs||[]).some(s=>/no plugins/i.test(s)) ? "No third-party plugins needed" : "See technical details for requirements"}</li>
           <li>${ICON.doc}<span>${p.details?.Format ? esc(p.details.Format) : typeName(p.type)}</span></li>
           <li>${ICON.mail}<span>Questions? <a href="contact.html" style="color:var(--violet-hi)">Contact us</a></span></li>
         </ul>
@@ -299,7 +299,7 @@ function renderPDP(){
     cur = i; const it = items[i];
     $$("video", screen).forEach(v => v.pause());
     screen.innerHTML = !it ? `<div class="noprev">PREVIEW COMING SOON</div>`
-      : it.kind === "video" ? `<span class="wm-note">PREVIEW · WATERMARKED</span><video src="${esc(it.src)}" ${p.poster?`poster="${esc(p.poster)}"`:""} controls ${reduce?"":"autoplay"} muted loop playsinline></video>`
+      : it.kind === "video" ? `<span class="wm-note">${esc(p.previewLabel || "PREVIEW · WATERMARKED")}</span><video src="${esc(it.src)}" ${p.poster?`poster="${esc(p.poster)}"`:""} controls ${reduce?"":"autoplay"} muted loop playsinline></video>`
       : `<img src="${esc(it.src)}" alt="${esc(p.name)} example">`;
     $$("#strip button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.i === i));
   };
